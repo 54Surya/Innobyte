@@ -1,0 +1,57 @@
+import pandas as pd
+
+# Load the dataset (replace 'amazon_sales_data.csv' with your actual file)
+df = pd.read_csv('/content/Amazon Sale Report.csv')
+
+# Display the first few rows of the dataset
+print(df.head())
+
+# Check for missing values in each column
+missing_values = df.isnull().sum()
+
+# Display columns with missing values
+print("Columns with missing values:")
+print(missing_values[missing_values > 0])
+
+# Remove rows with any missing values
+df_dropped = df.dropna()
+
+# Alternatively, remove columns with any missing values
+df_dropped_cols = df.dropna(axis=1)
+
+# Fill missing values with the mean of the column (for numeric columns only)
+numeric_columns = df.select_dtypes(include=['number']).columns
+df_filled_mean = df.copy()  # Create a copy to avoid modifying the original DataFrame
+df_filled_mean[numeric_columns] = df_filled_mean[numeric_columns].fillna(df_filled_mean[numeric_columns].mean())
+
+# Display the first few rows of the DataFrame with filled means
+print(df_filled_mean.head())
+
+# Fill missing values with the mean of the column (for numeric columns only)
+numeric_columns = df.select_dtypes(include=['number']).columns
+df_filled_mean = df.copy()  # Create a copy to avoid modifying the original DataFrame
+df_filled_mean[numeric_columns] = df_filled_mean[numeric_columns].fillna(df_filled_mean[numeric_columns].mean())
+
+# Display the first few rows of the DataFrame with filled means
+print(df_filled_mean.head())
+# Save the cleaned dataset to a new CSV file
+# Replace 'df_filled_mean' with the appropriate DataFrame you want to save
+df_cleaned = df_filled_mean
+df_cleaned.to_csv('amazon_sales_data_cleaned.csv', index=False)
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Example: Distribution of a numerical column
+sns.histplot(df['Amount'], kde=True)
+plt.show()
+
+# Example: Relationship between two variables
+sns.scatterplot(x='Fulfilment', y='Amount', data=df)
+plt.show()
+
+# Example: Creating a new feature based on existing ones
+# Convert 'Fulfilment' column to numeric type, handling potential errors
+df['Fulfilment'] = pd.to_numeric(df['Fulfilment'], errors='coerce')
+
+# Calculate the new 'Category' feature
+df['Category'] = df['Amount'] / df['Fulfilment']
